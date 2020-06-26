@@ -1,20 +1,22 @@
 <template>
     <div class="cinema_body">
         <ul>
-            <li>
+            <li v-for="item in cinemaList" :key="item.id">
                 <div>
-                   <span class="cinema_name">UA电影城(上海梅龙镇广场店)</span>
-                    <span class="P"><span class="price">25</span>元起</span>
+                   <span class="cinema_name">{{item.nm}}</span>
+                    <span class="P"><span class="price">{{item.sellPrice}}</span>元起</span>
                 </div>
                  <div class="address">
-                     <span>静安区南京西路1038号梅龙镇广场10楼（近江宁路）</span>
-                     <span>863.4km</span>
+                     <span>{{item.addr}}</span>
+                     <span>{{item.distance}}</span>
                  </div>
                 <div class="card">
-                    <div>改签</div>
-                    <div>退票</div>
-                    <div>折扣卡</div>
-                    <div>小吃</div>
+                    <div v-for="(num,key) in item.tag" v-if="num ===1" :key="key" :class="key |classCard">{{key | formateCard}}</div>
+
+<!--                    <div>改签</div>-->
+<!--                    <div>退票</div>-->
+<!--                    <div>折扣卡</div>-->
+<!--                    <div>小吃</div>-->
                 </div>
             </li>
         </ul>
@@ -23,7 +25,50 @@
 
 <script>
     export default {
-        name: "Cilist"
+        name: "Cilist",
+        data() {
+            return {
+                cinemaList:[]
+            }
+        },
+        mounted() {
+            this.axios.get('/api/cinemaList?cityId=10').then(res=>{
+                var msg = res.data.msg;
+                if  (msg === 'ok') {
+                    this.cinemaList = res.data.data.cinemas;
+                }
+            })
+        },
+        filters: {
+            formateCard(key) {
+                var card = [
+                    {key:'allowRefund',value:'可退'},
+                    {key:'endorse',value:'改签'},
+                    {key:'sell',value:'折扣卡'},
+                    {key:'snack',value:'小吃'}
+                ];
+                for (var i = 0;i < card.length;i++) {
+                    if (card[i].key === key) {
+                        return card[i].value;
+                    }
+                }
+                return '';
+            },
+            classCard(key) {
+               var card = [
+                   {key:'allowRefund',value:'or'},
+                   {key:'endorse',value:'or'},
+                   {key:'sell',value:'bl'},
+                   {key:'snack',value:'bl'}
+               ];
+                for (var i = 0;i < card.length;i++) {
+                    if (card[i].key === key) {
+                        return card[i].value;
+                    }
+                }
+                return '';
+            }
+         }
     }
 </script>
 
@@ -72,11 +117,11 @@
     font-size: 13px;
 
 }
- .cinema_body .card div .or {
+ .cinema_body .card  .or {
      color:#fc7103;
      border: 1px solid #fc7103;
  }
- .cinema_body .card div .bl {
+ .cinema_body .card  .bl {
      color: #589daf;
      border: 1px solid #589daf;
  }
