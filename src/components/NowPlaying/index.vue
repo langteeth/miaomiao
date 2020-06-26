@@ -1,30 +1,30 @@
 <template>
-    <div class="movie_body" to="/movie/nowPlaying">
+    <div class="movie_body">
         <ul>
-            <li>
-                <div class="pic_show"><img src="" alt=""></div>
+            <li v-for="item in movieList" :key="item.id"  >
+                <div class="pic_show"><img :src="item.img | setWH('128.180')" ></div>
                 <div class="info_list">
-                    <h2>蜘蛛侠:英雄归来</h2>
-                    <p>观众评 <span class="grade">8.2</span></p>
-                    <p>主演：汤姆·赫兰德，小罗伯特·唐尼</p>
-                    <p>今日热度4631</p>
+                    <h2>{{item.nm}}</h2>
+                    <p>观众评 <span class="grade">{{item.sc}}</span></p>
+                    <p>主演：{{item.star}}</p>
+                    <p>{{item.rt}}</p>
                 </div>
                 <div class="btn_mall">
                     购票
                 </div>
             </li>
-            <li>
-                <div class="pic_show"><img src="" alt=""></div>
-                <div class="info_list">
-                    <h2>疯魔神丐苏乞儿</h2>
-                    <p>观众评 <span class="grade">7.7</span></p>
-                    <p>主演：彭禺厶</p>
-                    <p>今日热度4231</p>
-                </div>
-                <div class="btn_mall">
-                    购票
-                </div>
-            </li>
+<!--            <li>-->
+<!--                <div class="pic_show"><img src="" alt=""></div>-->
+<!--                <div class="info_list">-->
+<!--                    <h2>疯魔神丐苏乞儿</h2>-->
+<!--                    <p>观众评 <span class="grade">7.7</span></p>-->
+<!--                    <p>主演：彭禺厶</p>-->
+<!--                    <p>今日热度4231</p>-->
+<!--                </div>-->
+<!--                <div class="btn_mall">-->
+<!--                    购票-->
+<!--                </div>-->
+<!--            </li>-->
 
         </ul>
     </div >
@@ -32,7 +32,20 @@
 
 <script>
     export default {
-        name: "NowPlaying"
+        name: "NowPlaying",
+        data() {
+            return {
+                movieList:[]
+            }
+        },
+        mounted() {
+            this.axios.get('/api/movieOnInfoList?cityId=10').then(res=>{
+                var msg = res.data.msg;
+                if(msg === 'ok') {
+                    this.movieList = res.data.data.movieList;
+                }
+            });
+        }
     }
 </script>
 
